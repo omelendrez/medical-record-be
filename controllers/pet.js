@@ -6,8 +6,7 @@ const sequelize = require("sequelize")
 const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE } = require('../helpers')
 
 const create = async (req, res) => {
-  const { id } = req.params
-  const { name, type, breed, sex, customerId } = req.body
+  const { id, name, type, breed, sex, birthDate, customerId } = req.body
 
   if (!name || !type || !breed || !sex || !customerId) {
     return ReE(res, { success: false, message: 'Faltan datos. Complete los datos faltantes y vuelva a intentar' }, 422)
@@ -137,12 +136,12 @@ const getInactive = (req, res) => {
 module.exports.getInactive = getInactive
 
 const getById = (req, res) => {
-  const { id } = req.params
+
   return Pet
     .findOne({
       tableHint: TableHints.NOLOCK,
       where: {
-        id
+        id: req.params.id
       },
       attributes: [
         'id',
@@ -165,11 +164,10 @@ const getById = (req, res) => {
 module.exports.getById = getById
 
 const deleteRecord = (req, res) => {
-  const { id } = req.params
   return Pet
     .findOne({
       where: {
-        id
+        id: req.params.id
       }
     })
     .then(pet =>
@@ -188,11 +186,10 @@ const deleteRecord = (req, res) => {
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
-  const { id } = req.params
   return Pet
     .findOne({
       where: {
-        id
+        id: req.params.id
       }
     })
     .then(pet =>
@@ -212,11 +209,10 @@ const deactivateRecord = (req, res) => {
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
-  const { id } = req.params
   return Pet
     .findOne({
       where: {
-        id
+        id: req.params.id
       }
     })
     .then(pet =>

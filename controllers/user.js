@@ -6,8 +6,7 @@ const sequelize = require("sequelize")
 const { ReS, ReE, updateOrCreate } = require('../helpers')
 
 const create = async (req, res) => {
-  const { id } = req.params
-  const { name, password } = req.body
+  const { id, name, password } = req.body
 
   const user = await User.findOne({ where: { name } })
 
@@ -56,8 +55,8 @@ const getAll = (req, res) => {
 module.exports.getAll = getAll
 
 const update = async (req, res) => {
-  const { id } = res.params
   const { name, password } = req.body
+  const { id } = res.params
   return User
     .findOne({ where: { id } })
     .then(user => {

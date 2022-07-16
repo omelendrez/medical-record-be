@@ -13,8 +13,7 @@ const {
 } = require("../helpers")
 
 const create = async (req, res) => {
-  const { id } = req.params
-  const { date, amount } = req.body
+  const { id, date, amount } = req.body
 
   if (!id) {
     if (amount.length === 0)
@@ -214,11 +213,10 @@ const getInactive = (req, res) => {
 module.exports.getInactive = getInactive
 
 const getById = (req, res) => {
-  const { id } = req.params
   return Vaccination.findOne({
     tableHint: TableHints.NOLOCK,
     where: {
-      id
+      id: req.params.id,
     },
     attributes: [
       "id",
@@ -243,7 +241,6 @@ const getById = (req, res) => {
 module.exports.getById = getById
 
 const getByPet = (req, res) => {
-  const { id } = req.params
   const User = require("../models").user
   Vaccination.belongsTo(User)
 
@@ -256,7 +253,7 @@ const getByPet = (req, res) => {
     tableHint: TableHints.NOLOCK,
     where: {
       statusId: ACTIVE,
-      petId
+      petId: req.params.id,
     },
     offset,
     limit,
@@ -328,10 +325,9 @@ const getnextAppointments = (req, res) => {
 module.exports.getnextAppointments = getnextAppointments
 
 const deleteRecord = (req, res) => {
-  const { id } = req.params
   return Vaccination.findOne({
     where: {
-      id
+      id: req.params.id,
     },
   })
     .then((vaccination) =>
@@ -353,10 +349,9 @@ const deleteRecord = (req, res) => {
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
-  const { id } = req.params
   return Vaccination.findOne({
     where: {
-      id
+      id: req.params.id,
     },
   })
     .then((vaccination) =>
@@ -378,10 +373,9 @@ const deactivateRecord = (req, res) => {
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
-  const { id } = req.params
   return Vaccination.findOne({
     where: {
-      id
+      id: req.params.id,
     },
   })
     .then((vaccination) =>

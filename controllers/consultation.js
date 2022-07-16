@@ -13,8 +13,7 @@ const {
 } = require("../helpers")
 
 const create = async (req, res) => {
-  const { id } = req.params
-  const { date, amount } = req.body
+  const { id, date, amount } = req.body
 
   if (amount.length === 0)
     return ReE(
@@ -213,11 +212,10 @@ const getInactive = (req, res) => {
 module.exports.getInactive = getInactive
 
 const getById = (req, res) => {
-  const { id } = req.params
   return Consultation.findOne({
     tableHint: TableHints.NOLOCK,
     where: {
-      id,
+      id: req.params.id,
     },
     attributes: [
       "id",
@@ -351,10 +349,9 @@ const getnextAppointments = (req, res) => {
 module.exports.getnextAppointments = getnextAppointments
 
 const deleteRecord = (req, res) => {
-  const { id } = req.params
   return Consultation.findOne({
     where: {
-      id,
+      id: req.params.id,
     },
   })
     .then((consultation) =>
@@ -374,10 +371,9 @@ const deleteRecord = (req, res) => {
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
-  const { id } = req.params
   return Consultation.findOne({
     where: {
-      id,
+      id: req.params.id,
     },
   })
     .then((consultation) =>
@@ -397,10 +393,9 @@ const deactivateRecord = (req, res) => {
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
-  const { id } = req.params
   return Consultation.findOne({
     where: {
-      id,
+      id: req.params.id,
     },
   })
     .then((consultation) =>
