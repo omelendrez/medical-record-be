@@ -1,8 +1,11 @@
 {
   "development": {
-    "use_env_variable": "CLEARDB_DATABASE_URL",
     "dialect": "mysql",
     "logging": false,
+    "username": "vmr_user",
+    "password": "M1a4$1t4E8r0",
+    "database": "vmr",
+    "host": "127.0.0.1",
     "dialectOptions": {
       "decimalNumbers": true
     },
