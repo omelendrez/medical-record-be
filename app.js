@@ -24,14 +24,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 
-const connection = process.env.CLEARDB_DATABASE_URL?.split('/')
-const dbName = connection[connection.length - 1]
-
 models.sequelize.authenticate()
-  .then(() => {
-    console.log('Connected to SQL database:', dbName || CONFIG.db_name)
-  })
-  .catch(err => console.error('Unable to connect to SQL database:', dbName || CONFIG.db_name, err))
+  .then(() => console.log('Connected to SQL database:', CONFIG.db_name))
+  .catch(err => console.error('Unable to connect to SQL database:', CONFIG.db_name, err))
 
 if (CONFIG.app === 'dev') {
   models.sequelize.sync({ force: false }) //creates table if they do not already exist
