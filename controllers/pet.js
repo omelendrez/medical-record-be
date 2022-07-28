@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const TableHints = Sequelize.TableHints
 const Op = Sequelize.Op
 const sequelize = require("sequelize")
-const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE } = require('../helpers')
+const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE, queryResultsLimit } = require('../helpers')
 
 const create = async (req, res) => {
   const { id, name, type, breed, sex, birthDate, customerId } = req.body
@@ -40,7 +40,7 @@ const getAll = (req, res) => {
   Pet.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -93,7 +93,7 @@ const getInactive = (req, res) => {
   Pet.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)

@@ -101,3 +101,5 @@ module.exports.updateCustomerBalance = async customerId => {
       customer.update({ balance: total })
     })
 }
+
+module.exports.queryResultsLimit = 10

@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const TableHints = Sequelize.TableHints
 const Op = Sequelize.Op
 const sequelize = require("sequelize")
-const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE } = require('../helpers')
+const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE, queryResultsLimit } = require('../helpers')
 
 const create = async (req, res) => {
   const { id, name, phone } = req.body
@@ -46,21 +46,23 @@ const getAll = (req, res) => {
   Customer.hasMany(Pet)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
+
+  const filterArray = filter.split(' ')
+
+  const options = filterArray.map((word) => ({ name: { [Op.like]: `%${word}%` } }))
+
+  let where = {
+    [Op.and]: options,
+    statusId: ACTIVE
+  }
 
   const offset = limit * (page - 1)
   return Customer
     .findAndCountAll({
       tableHint: TableHints.NOLOCK,
-      where: {
-        [Op.or]: [
-          { name: { [Op.like]: `%${filter}%` } },
-          { address: { [Op.like]: `%${filter}%` } },
-          { phone: { [Op.like]: `%${filter}%` } }
-        ],
-        statusId: ACTIVE
-      },
+      where,
       distinct: true,
       offset,
       limit,
@@ -99,7 +101,7 @@ const getInactive = (req, res) => {
   Customer.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -149,7 +151,7 @@ const getDebtors = (req, res) => {
   Status.hasMany(Customer)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)

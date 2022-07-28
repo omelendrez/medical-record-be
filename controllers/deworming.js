@@ -10,6 +10,7 @@ const {
   ACTIVE,
   INACTIVE,
   updateCustomerBalance,
+  queryResultsLimit
 } = require("../helpers")
 
 const create = async (req, res) => {
@@ -77,7 +78,7 @@ const getAll = (req, res) => {
   Deworming.belongsTo(User)
 
   const filter = req.query.filter || ""
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -144,7 +145,7 @@ const getInactive = (req, res) => {
   Deworming.belongsTo(Customer)
 
   const filter = req.query.filter || ""
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -233,7 +234,7 @@ const getByPet = (req, res) => {
   const User = require("../models").user
   Deworming.belongsTo(User)
 
-  const limit = parseInt(req.query.limit || 10)
+  const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
