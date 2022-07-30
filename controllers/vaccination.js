@@ -1,8 +1,8 @@
-const Vaccination = require("../models").vaccination
-const Sequelize = require("sequelize")
+const Vaccination = require('../models').vaccination
+const Sequelize = require('sequelize')
 const TableHints = Sequelize.TableHints
 const Op = Sequelize.Op
-const sequelize = require("sequelize")
+const sequelize = require('sequelize')
 const {
   ReS,
   ReE,
@@ -11,7 +11,7 @@ const {
   INACTIVE,
   updateCustomerBalance,
   queryResultsLimit
-} = require("../helpers")
+} = require('../helpers')
 
 const create = async (req, res) => {
   const { id, date, amount } = req.body
@@ -20,13 +20,13 @@ const create = async (req, res) => {
     if (amount.length === 0)
       return ReE(
         res,
-        { success: false, message: "Los importes no pueden quedar vacíos" },
+        { success: false, message: 'Los importes no pueden quedar vacíos' },
         422
       )
     if (isNaN(amount))
       return ReE(
         res,
-        { success: false, message: "Los importes deben contener números" },
+        { success: false, message: 'Los importes deben contener números' },
         422
       )
     if (!date)
@@ -35,7 +35,7 @@ const create = async (req, res) => {
         {
           success: false,
           message:
-            "Faltan datos. Complete los datos faltantes y vuelva a intentar",
+            'Faltan datos. Complete los datos faltantes y vuelva a intentar'
         },
         422
       )
@@ -49,8 +49,8 @@ const create = async (req, res) => {
     Vaccination,
     {
       id: {
-        [Op.eq]: id,
-      },
+        [Op.eq]: id
+      }
     },
     req.body
   )
@@ -58,8 +58,8 @@ const create = async (req, res) => {
       updateCustomerBalance(record.customerId)
 
       const resp = {
-        message: "Datos guardados satisfactoriamente",
-        record,
+        message: 'Datos guardados satisfactoriamente',
+        record
       }
       return ReS(res, resp, 201)
     })
@@ -68,16 +68,16 @@ const create = async (req, res) => {
 module.exports.create = create
 
 const getAll = (req, res) => {
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Vaccination.belongsTo(Pet)
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Vaccination.belongsTo(Customer)
 
-  const User = require("../models").user
+  const User = require('../models').user
   Vaccination.belongsTo(User)
 
-  const filter = req.query.filter || ""
+  const filter = req.query.filter || ''
   const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
@@ -88,53 +88,53 @@ const getAll = (req, res) => {
     where: {
       [Op.or]: [
         { vaccination: { [Op.like]: `%${filter}%` } },
-        sequelize.where(sequelize.literal("pet.name"), "like", `%${filter}%`),
+        sequelize.where(sequelize.literal('pet.name'), 'like', `%${filter}%`),
         sequelize.where(
-          sequelize.literal("customer.name"),
-          "like",
+          sequelize.literal('customer.name'),
+          'like',
           `%${filter}%`
-        ),
+        )
       ],
-      statusId: ACTIVE,
+      statusId: ACTIVE
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.col("customer.name"), "customerName"],
-      [sequelize.col("pet.name"), "petName"],
-      [sequelize.fn("date_format", sequelize.col("date"), "%Y-%m-%d"), "date"],
-      "vaccination",
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.col('customer.name'), 'customerName'],
+      [sequelize.col('pet.name'), 'petName'],
+      [sequelize.fn('date_format', sequelize.col('date'), '%Y-%m-%d'), 'date'],
+      'vaccination',
       [
         sequelize.fn(
-          "date_format",
-          sequelize.col("nextAppointment"),
-          "%Y-%m-%d"
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
         ),
-        "nextAppointment",
+        'nextAppointment'
       ],
-      "amount",
-      [sequelize.col("user.name"), "userName"],
-      [sequelize.col("vaccination.updatedAt"), "updatedAt"],
+      'amount',
+      [sequelize.col('user.name'), 'userName'],
+      [sequelize.col('vaccination.updatedAt'), 'updatedAt']
     ],
-    order: [["date", "DESC"]],
+    order: [['date', 'DESC']],
     include: [
       {
         model: Pet,
-        attributes: [],
+        attributes: []
       },
       {
         model: Customer,
-        attributes: [],
+        attributes: []
       },
       {
         model: User,
         attributes: [],
-        required: false,
-      },
-    ],
+        required: false
+      }
+    ]
   })
     .then((vaccinations) =>
       res.status(200).json({ success: true, vaccinations })
@@ -144,16 +144,16 @@ const getAll = (req, res) => {
 module.exports.getAll = getAll
 
 const getInactive = (req, res) => {
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Vaccination.belongsTo(Pet)
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Vaccination.belongsTo(Customer)
 
-  const User = require("../models").user
+  const User = require('../models').user
   Vaccination.belongsTo(User)
 
-  const filter = req.query.filter || ""
+  const filter = req.query.filter || ''
   const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
@@ -164,46 +164,46 @@ const getInactive = (req, res) => {
     where: {
       [Op.or]: [
         { vaccination: { [Op.like]: `%${filter}%` } },
-        sequelize.where(sequelize.literal("pet.name"), "like", `%${filter}%`),
+        sequelize.where(sequelize.literal('pet.name'), 'like', `%${filter}%`),
         sequelize.where(
-          sequelize.literal("customer.name"),
-          "like",
+          sequelize.literal('customer.name'),
+          'like',
           `%${filter}%`
-        ),
+        )
       ],
-      statusId: INACTIVE,
+      statusId: INACTIVE
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.col("customer.name"), "customerName"],
-      [sequelize.col("pet.name"), "petName"],
-      "date",
-      "vaccination",
-      "nextAppointment",
-      "amount",
-      [sequelize.col("user.name"), "userName"],
-      [sequelize.col("vaccination.updatedAt"), "updatedAt"],
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.col('customer.name'), 'customerName'],
+      [sequelize.col('pet.name'), 'petName'],
+      'date',
+      'vaccination',
+      'nextAppointment',
+      'amount',
+      [sequelize.col('user.name'), 'userName'],
+      [sequelize.col('vaccination.updatedAt'), 'updatedAt']
     ],
-    order: [["date", "DESC"]],
+    order: [['date', 'DESC']],
     include: [
       {
         model: Pet,
-        attributes: [],
+        attributes: []
       },
       {
         model: Customer,
-        attributes: [],
+        attributes: []
       },
       {
         model: User,
         attributes: [],
-        required: false,
-      },
-    ],
+        required: false
+      }
+    ]
   })
     .then((vaccinations) =>
       res.status(200).json({ success: true, vaccinations })
@@ -217,24 +217,24 @@ const getById = (req, res) => {
   return Vaccination.findOne({
     tableHint: TableHints.NOLOCK,
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.fn("date_format", sequelize.col("date"), "%Y-%m-%d"), "date"],
-      "vaccination",
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.fn('date_format', sequelize.col('date'), '%Y-%m-%d'), 'date'],
+      'vaccination',
       [
         sequelize.fn(
-          "date_format",
-          sequelize.col("nextAppointment"),
-          "%Y-%m-%d"
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
         ),
-        "nextAppointment",
+        'nextAppointment'
       ],
-      "amount",
-    ],
+      'amount'
+    ]
   })
     .then((vaccination) => res.status(200).json({ success: true, vaccination }))
     .catch((err) => ReE(res, err, 422))
@@ -242,7 +242,7 @@ const getById = (req, res) => {
 module.exports.getById = getById
 
 const getByPet = (req, res) => {
-  const User = require("../models").user
+  const User = require('../models').user
   Vaccination.belongsTo(User)
 
   const limit = parseInt(req.query.limit || queryResultsLimit)
@@ -254,24 +254,24 @@ const getByPet = (req, res) => {
     tableHint: TableHints.NOLOCK,
     where: {
       statusId: ACTIVE,
-      petId: req.params.id,
+      petId: req.params.id
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "date",
-      "vaccination",
-      "nextAppointment",
-      "amount",
-      [sequelize.col("user.name"), "userName"],
+      'id',
+      'date',
+      'vaccination',
+      'nextAppointment',
+      'amount',
+      [sequelize.col('user.name'), 'userName']
     ],
-    order: [["date", "DESC"]],
+    order: [['date', 'DESC']],
     include: {
       model: User,
       attributes: [],
-      required: false,
-    },
+      required: false
+    }
   })
     .then((vaccinations) =>
       res.status(200).json({ success: true, vaccinations })
@@ -281,41 +281,41 @@ const getByPet = (req, res) => {
 module.exports.getByPet = getByPet
 
 const getnextAppointments = (req, res) => {
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Vaccination.belongsTo(Pet)
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Vaccination.belongsTo(Customer)
 
   return Vaccination.findAndCountAll({
     where: [
       sequelize.where(
-        sequelize.col("nextAppointment"),
-        ">=",
+        sequelize.col('nextAppointment'),
+        '>=',
         //sequelize.literal("DATE_ADD(CURDATE(), INTERVAL -1 DAY)")
-        sequelize.literal("CURDATE()")
-      ),
+        sequelize.literal('CURDATE()')
+      )
     ],
     attributes: [
-      "id",
+      'id',
       [
         sequelize.fn(
-          "date_format",
-          sequelize.col("nextAppointment"),
-          "%Y-%m-%d"
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
         ),
-        "nextAppointment",
+        'nextAppointment'
       ],
-      [sequelize.col("pet.name"), "petName"],
-      [sequelize.col("customer.name"), "customerName"],
-      "customerId",
-      "petId",
+      [sequelize.col('pet.name'), 'petName'],
+      [sequelize.col('customer.name'), 'customerName'],
+      'customerId',
+      'petId'
     ],
-    order: [["nextAppointment", "ASC"]],
+    order: [['nextAppointment', 'ASC']],
     include: [
       { model: Pet, attributes: [] },
-      { model: Customer, attributes: [] },
-    ],
+      { model: Customer, attributes: [] }
+    ]
   })
     .then((vaccinations) =>
       res.status(200).json({ success: true, vaccinations })
@@ -328,32 +328,32 @@ module.exports.getnextAppointments = getnextAppointments
 const deleteRecord = (req, res) => {
   return Vaccination.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((vaccination) =>
       vaccination
-        .update({ statusId: INACTIVE })
+        .destroy()
         .then((vaccination) => {
           const resp = {
             message: `Vacunación eliminada`,
-            vaccination,
+            vaccination
           }
           return ReS(res, resp, 200)
         })
         .catch(() =>
-          ReE(res, "Error ocurrido intentando eliminar la vacunación")
+          ReE(res, 'Error ocurrido intentando eliminar la vacunación')
         )
     )
-    .catch(() => ReE(res, "Error ocurrido intentando eliminar la vacunación"))
+    .catch(() => ReE(res, 'Error ocurrido intentando eliminar la vacunación'))
 }
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
   return Vaccination.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((vaccination) =>
       vaccination
@@ -361,23 +361,23 @@ const deactivateRecord = (req, res) => {
         .then((vaccination) => {
           const resp = {
             message: `Vacunación desactivada`,
-            vaccination,
+            vaccination
           }
           return ReS(res, resp, 200)
         })
         .catch(() =>
-          ReE(res, "Error ocurrido intentando eliminar la vacunación")
+          ReE(res, 'Error ocurrido intentando eliminar la vacunación')
         )
     )
-    .catch(() => ReE(res, "Error ocurrido intentando eliminar la vacunación"))
+    .catch(() => ReE(res, 'Error ocurrido intentando eliminar la vacunación'))
 }
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
   return Vaccination.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((vaccination) =>
       vaccination
@@ -385,14 +385,14 @@ const restoreRecord = (req, res) => {
         .then((vaccination) => {
           const resp = {
             message: `Vacunación restaurada`,
-            vaccination,
+            vaccination
           }
           return ReS(res, resp, 200)
         })
         .catch(() =>
-          ReE(res, "Error ocurrido intentando restaurar la vacunación")
+          ReE(res, 'Error ocurrido intentando restaurar la vacunación')
         )
     )
-    .catch(() => ReE(res, "Error ocurrido intentando restaurar la vacunación"))
+    .catch(() => ReE(res, 'Error ocurrido intentando restaurar la vacunación'))
 }
 module.exports.restoreRecord = restoreRecord
