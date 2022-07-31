@@ -1,0 +1,26 @@
+https://medical-records-rest-api.herokuapp.com/api/
+
+### Crear registro
+POST http://localhost:3000/api/companies
+content-type: application/json
+
+{
+    "name": "Veterinaria Colitas Felices",
+    "address": "Vieytes 2693",
+    "mobile": "0291 501-9856",
+    "city": "Bahía Blanca",
+    "state": "Buenos Aires",
+    "observations": "",
+    "statusId": 1
+}
+
+### Actualizar registro
+POST http://localhost:3000/api/companies/1
+content-type: application/json
+
+{
+    "statusId": 1
+}
+
+### Lista los saldos
+GET http://localhost:3000/api/companies

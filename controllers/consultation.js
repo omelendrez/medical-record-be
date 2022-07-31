@@ -1,8 +1,8 @@
-const Consultation = require("../models").consultation
-const Sequelize = require("sequelize")
+const Consultation = require('../models').consultation
+const Sequelize = require('sequelize')
 const TableHints = Sequelize.TableHints
 const Op = Sequelize.Op
-const sequelize = require("sequelize")
+const sequelize = require('sequelize')
 const {
   ReS,
   ReE,
@@ -11,21 +11,22 @@ const {
   INACTIVE,
   updateCustomerBalance,
   queryResultsLimit
-} = require("../helpers")
+} = require('../helpers')
 
 const create = async (req, res) => {
-  const { id, date, amount } = req.body
+  const { id } = req.params
+  const { date, amount } = req.body
 
   if (amount.length === 0)
     return ReE(
       res,
-      { success: false, message: "Los importes no pueden quedar vacíos" },
+      { success: false, message: 'Los importes no pueden quedar vacíos' },
       422
     )
   if (isNaN(amount))
     return ReE(
       res,
-      { success: false, message: "Los importes deben contener números" },
+      { success: false, message: 'Los importes deben contener números' },
       422
     )
   if (!date)
@@ -34,7 +35,7 @@ const create = async (req, res) => {
       {
         success: false,
         message:
-          "Faltan datos. Complete los datos faltantes y vuelva a intentar",
+          'Faltan datos. Complete los datos faltantes y vuelva a intentar'
       },
       422
     )
@@ -47,8 +48,8 @@ const create = async (req, res) => {
     Consultation,
     {
       id: {
-        [Op.eq]: id,
-      },
+        [Op.eq]: id
+      }
     },
     req.body
   )
@@ -56,8 +57,8 @@ const create = async (req, res) => {
       updateCustomerBalance(record.customerId)
 
       const resp = {
-        message: "Datos guardados satisfactoriamente",
-        record,
+        message: 'Datos guardados satisfactoriamente',
+        record
       }
       return ReS(res, resp, 201)
     })
@@ -66,16 +67,16 @@ const create = async (req, res) => {
 module.exports.create = create
 
 const getAll = (req, res) => {
-  const User = require("../models").user
+  const User = require('../models').user
   Consultation.belongsTo(User)
 
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Consultation.belongsTo(Pet)
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Consultation.belongsTo(Customer)
 
-  const filter = req.query.filter || ""
+  const filter = req.query.filter || ''
   const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
@@ -89,47 +90,47 @@ const getAll = (req, res) => {
         { clinicalExamination: { [Op.like]: `%${filter}%` } },
         { diagnosis: { [Op.like]: `%${filter}%` } },
         { treatment: { [Op.like]: `%${filter}%` } },
-        sequelize.where(sequelize.literal("pet.name"), "like", `%${filter}%`),
+        sequelize.where(sequelize.literal('pet.name'), 'like', `%${filter}%`),
         sequelize.where(
-          sequelize.literal("customer.name"),
-          "like",
+          sequelize.literal('customer.name'),
+          'like',
           `%${filter}%`
-        ),
+        )
       ],
-      statusId: ACTIVE,
+      statusId: ACTIVE
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.col("customer.name"), "customerName"],
-      [sequelize.col("pet.name"), "petName"],
-      "date",
-      "diagnosis",
-      "treatmentStage",
-      "nextAppointment",
-      "amount",
-      [sequelize.col("user.name"), "userName"],
-      "updatedAt",
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.col('customer.name'), 'customerName'],
+      [sequelize.col('pet.name'), 'petName'],
+      'date',
+      'diagnosis',
+      'treatmentStage',
+      'nextAppointment',
+      'amount',
+      [sequelize.col('user.name'), 'userName'],
+      'updatedAt'
     ],
-    order: [["date", "DESC"]],
+    order: [['date', 'DESC']],
     include: [
       {
         model: Pet,
-        attributes: [],
+        attributes: []
       },
       {
         model: Customer,
-        attributes: [],
+        attributes: []
       },
       {
         model: User,
         attributes: [],
-        required: false,
-      },
-    ],
+        required: false
+      }
+    ]
   })
     .then((consultations) =>
       res.status(200).json({ success: true, consultations })
@@ -139,16 +140,16 @@ const getAll = (req, res) => {
 module.exports.getAll = getAll
 
 const getInactive = (req, res) => {
-  const User = require("../models").user
+  const User = require('../models').user
   Consultation.belongsTo(User)
 
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Consultation.belongsTo(Pet)
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Consultation.belongsTo(Customer)
 
-  const filter = req.query.filter || ""
+  const filter = req.query.filter || ''
   const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
@@ -162,47 +163,47 @@ const getInactive = (req, res) => {
         { clinicalExamination: { [Op.like]: `%${filter}%` } },
         { diagnosis: { [Op.like]: `%${filter}%` } },
         { treatment: { [Op.like]: `%${filter}%` } },
-        sequelize.where(sequelize.literal("pet.name"), "like", `%${filter}%`),
+        sequelize.where(sequelize.literal('pet.name'), 'like', `%${filter}%`),
         sequelize.where(
-          sequelize.literal("customer.name"),
-          "like",
+          sequelize.literal('customer.name'),
+          'like',
           `%${filter}%`
-        ),
+        )
       ],
-      statusId: INACTIVE,
+      statusId: INACTIVE
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.col("customer.name"), "customerName"],
-      [sequelize.col("pet.name"), "petName"],
-      "date",
-      "diagnosis",
-      "treatmentStage",
-      "nextAppointment",
-      "amount",
-      [sequelize.col("user.name"), "userName"],
-      "updatedAt",
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.col('customer.name'), 'customerName'],
+      [sequelize.col('pet.name'), 'petName'],
+      'date',
+      'diagnosis',
+      'treatmentStage',
+      'nextAppointment',
+      'amount',
+      [sequelize.col('user.name'), 'userName'],
+      'updatedAt'
     ],
-    order: [["date", "DESC"]],
+    order: [['date', 'DESC']],
     include: [
       {
         model: Pet,
-        attributes: [],
+        attributes: []
       },
       {
         model: Customer,
-        attributes: [],
+        attributes: []
       },
       {
         model: User,
         attributes: [],
-        required: false,
-      },
-    ],
+        required: false
+      }
+    ]
   })
     .then((consultations) =>
       res.status(200).json({ success: true, consultations })
@@ -216,28 +217,28 @@ const getById = (req, res) => {
   return Consultation.findOne({
     tableHint: TableHints.NOLOCK,
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     attributes: [
-      "id",
-      "customerId",
-      "petId",
-      [sequelize.fn("date_format", sequelize.col("date"), "%Y-%m-%d"), "date"],
-      "anamnesis",
-      "clinicalExamination",
-      "diagnosis",
-      "treatment",
-      "treatmentStage",
+      'id',
+      'customerId',
+      'petId',
+      [sequelize.fn('date_format', sequelize.col('date'), '%Y-%m-%d'), 'date'],
+      'anamnesis',
+      'clinicalExamination',
+      'diagnosis',
+      'treatment',
+      'treatmentStage',
       [
         sequelize.fn(
-          "date_format",
-          sequelize.col("nextAppointment"),
-          "%Y-%m-%d"
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
         ),
-        "nextAppointment",
+        'nextAppointment'
       ],
-      "amount",
-    ],
+      'amount'
+    ]
   })
     .then((consultation) =>
       res.status(200).json({ success: true, consultation })
@@ -247,7 +248,7 @@ const getById = (req, res) => {
 module.exports.getById = getById
 
 const getByPet = (req, res) => {
-  const User = require("../models").user
+  const User = require('../models').user
   Consultation.belongsTo(User)
 
   const limit = parseInt(req.query.limit || queryResultsLimit)
@@ -259,29 +260,29 @@ const getByPet = (req, res) => {
     tableHint: TableHints.NOLOCK,
     where: {
       statusId: ACTIVE,
-      petId: req.params.id,
+      petId: req.params.id
     },
     offset,
     limit,
     attributes: [
-      "id",
-      "date",
-      "anamnesis",
-      "clinicalExamination",
-      "diagnosis",
-      "treatment",
-      "treatmentStage",
-      "nextAppointment",
-      "amount",
-      [sequelize.col("user.name"), "userName"],
-      "updatedAt",
+      'id',
+      'date',
+      'anamnesis',
+      'clinicalExamination',
+      'diagnosis',
+      'treatment',
+      'treatmentStage',
+      'nextAppointment',
+      'amount',
+      [sequelize.col('user.name'), 'userName'],
+      'updatedAt'
     ],
-    order: [["date", "DESC"]],
+    order: [['id', 'DESC']],
     include: {
       model: User,
       attributes: [],
-      required: false,
-    },
+      required: false
+    }
   })
     .then((consultations) =>
       res.status(200).json({ success: true, consultations })
@@ -291,7 +292,7 @@ const getByPet = (req, res) => {
 module.exports.getByPet = getByPet
 
 const getnextAppointments = (req, res) => {
-  const Pet = require("../models").pet
+  const Pet = require('../models').pet
   Consultation.belongsTo(Pet)
 
   /**
@@ -304,7 +305,7 @@ const getnextAppointments = (req, res) => {
       order by co.nextAppointment;
    */
 
-  const Customer = require("../models").customer
+  const Customer = require('../models').customer
   Consultation.belongsTo(Customer)
 
   return Consultation.findAndCountAll({
@@ -312,34 +313,34 @@ const getnextAppointments = (req, res) => {
       [Op.and]: [
         [
           sequelize.where(
-            sequelize.col("nextAppointment"),
-            ">=",
-            sequelize.literal("CURDATE()")
-          ),
+            sequelize.col('nextAppointment'),
+            '>=',
+            sequelize.literal('CURDATE()')
+          )
         ],
-        { statusId: ACTIVE },
-      ],
+        { statusId: ACTIVE }
+      ]
     },
     attributes: [
-      "id",
+      'id',
       [
         sequelize.fn(
-          "date_format",
-          sequelize.col("nextAppointment"),
-          "%Y-%m-%d"
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
         ),
-        "nextAppointment",
+        'nextAppointment'
       ],
-      [sequelize.col("pet.name"), "petName"],
-      [sequelize.col("customer.name"), "customerName"],
-      "customerId",
-      "petId",
+      [sequelize.col('pet.name'), 'petName'],
+      [sequelize.col('customer.name'), 'customerName'],
+      'customerId',
+      'petId'
     ],
-    order: [["nextAppointment", "ASC"]],
+    order: [['nextAppointment', 'ASC']],
     include: [
       { model: Pet, attributes: [] },
-      { model: Customer, attributes: [] },
-    ],
+      { model: Customer, attributes: [] }
+    ]
   })
     .then((consultations) =>
       res.status(200).json({ success: true, consultations })
@@ -352,8 +353,8 @@ module.exports.getnextAppointments = getnextAppointments
 const deleteRecord = (req, res) => {
   return Consultation.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((consultation) =>
       consultation
@@ -361,21 +362,21 @@ const deleteRecord = (req, res) => {
         .then((consultation) => {
           const resp = {
             message: `Consulta eliminada`,
-            consultation,
+            consultation
           }
           return ReS(res, resp, 200)
         })
-        .catch(() => ReE(res, "Error ocurrido intentando eliminar la consulta"))
+        .catch(() => ReE(res, 'Error ocurrido intentando eliminar la consulta'))
     )
-    .catch(() => ReE(res, "Error ocurrido intentando eliminar la consulta"))
+    .catch(() => ReE(res, 'Error ocurrido intentando eliminar la consulta'))
 }
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
   return Consultation.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((consultation) =>
       consultation
@@ -383,21 +384,21 @@ const deactivateRecord = (req, res) => {
         .then((consultation) => {
           const resp = {
             message: `Consulta desactivada`,
-            consultation,
+            consultation
           }
           return ReS(res, resp, 200)
         })
-        .catch(() => ReE(res, "Error ocurrido intentando eliminar la consulta"))
+        .catch(() => ReE(res, 'Error ocurrido intentando eliminar la consulta'))
     )
-    .catch(() => ReE(res, "Error ocurrido intentando eliminar la consulta"))
+    .catch(() => ReE(res, 'Error ocurrido intentando eliminar la consulta'))
 }
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
   return Consultation.findOne({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
     .then((consultation) =>
       consultation
@@ -405,14 +406,14 @@ const restoreRecord = (req, res) => {
         .then((consultation) => {
           const resp = {
             message: `Consulta restaurada`,
-            consultation,
+            consultation
           }
           return ReS(res, resp, 200)
         })
         .catch(() =>
-          ReE(res, "Error ocurrido intentando restaurar la consulta")
+          ReE(res, 'Error ocurrido intentando restaurar la consulta')
         )
     )
-    .catch(() => ReE(res, "Error ocurrido intentando restaurar la consulta"))
+    .catch(() => ReE(res, 'Error ocurrido intentando restaurar la consulta'))
 }
 module.exports.restoreRecord = restoreRecord

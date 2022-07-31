@@ -2,17 +2,34 @@ const Pet = require('../models').pet
 const Sequelize = require('sequelize')
 const TableHints = Sequelize.TableHints
 const Op = Sequelize.Op
-const sequelize = require("sequelize")
-const { ReS, ReE, updateOrCreate, ACTIVE, INACTIVE, queryResultsLimit } = require('../helpers')
+const sequelize = require('sequelize')
+const {
+  ReS,
+  ReE,
+  updateOrCreate,
+  ACTIVE,
+  INACTIVE,
+  queryResultsLimit
+} = require('../helpers')
 
 const create = async (req, res) => {
-  const { id, name, type, breed, sex, birthDate, customerId } = req.body
+  const { id } = req.params
+  const { name, type, breed, sex, customerId } = req.body
 
   if (!name || !type || !breed || !sex || !customerId) {
-    return ReE(res, { success: false, message: 'Faltan datos. Complete los datos faltantes y vuelva a intentar' }, 422)
+    return ReE(
+      res,
+      {
+        success: false,
+        message:
+          'Faltan datos. Complete los datos faltantes y vuelva a intentar'
+      },
+      422
+    )
   }
 
-  await updateOrCreate(Pet,
+  await updateOrCreate(
+    Pet,
     {
       id: {
         [Op.eq]: id
@@ -20,14 +37,14 @@ const create = async (req, res) => {
     },
     req.body
   )
-    .then(record => {
+    .then((record) => {
       const resp = {
         message: 'Datos guardados satisfactoriamente',
         record
       }
       return ReS(res, resp, 201)
     })
-    .catch(err => ReE(res, err, 422))
+    .catch((err) => ReE(res, err, 422))
 }
 module.exports.create = create
 
@@ -45,46 +62,46 @@ const getAll = (req, res) => {
 
   const offset = limit * (page - 1)
 
-  return Pet
-    .findAndCountAll({
-      tableHint: TableHints.NOLOCK,
-      where: {
-        [Op.or]: [
-          { name: { [Op.like]: `%${filter}%` } },
-          { breed: { [Op.like]: `%${filter}%` } }
-        ],
-        statusId: ACTIVE
-      },
-      offset,
-      limit,
-      order: [['id', 'DESC']],
-      attributes: [
-        'id',
-        'customerId',
-        'name',
-        'type',
-        'breed',
-        'sex',
-        'weight',
-        'birthDate',
-        'observations',
-        [sequelize.col('customer.name'), 'customerName'],
-        [sequelize.col('user.name'), 'userName'],
-        'updatedAt'
+  return Pet.findAndCountAll({
+    tableHint: TableHints.NOLOCK,
+    where: {
+      [Op.or]: [
+        { name: { [Op.like]: `%${filter}%` } },
+        { breed: { [Op.like]: `%${filter}%` } }
       ],
-      include: [{
+      statusId: ACTIVE
+    },
+    offset,
+    limit,
+    order: [['id', 'DESC']],
+    attributes: [
+      'id',
+      'customerId',
+      'name',
+      'type',
+      'breed',
+      'sex',
+      'weight',
+      'birthDate',
+      'observations',
+      [sequelize.col('customer.name'), 'customerName'],
+      [sequelize.col('user.name'), 'userName'],
+      'updatedAt'
+    ],
+    include: [
+      {
         model: Customer,
         attributes: []
-      }, {
+      },
+      {
         model: User,
         attributes: [],
         required: false
-      }]
-    })
-    .then(pets => res
-      .status(200)
-      .json({ success: true, pets }))
-    .catch(err => ReE(res, err, 422))
+      }
+    ]
+  })
+    .then((pets) => res.status(200).json({ success: true, pets }))
+    .catch((err) => ReE(res, err, 422))
 }
 module.exports.getAll = getAll
 
@@ -98,81 +115,77 @@ const getInactive = (req, res) => {
 
   const offset = limit * (page - 1)
 
-  return Pet
-    .findAndCountAll({
-      tableHint: TableHints.NOLOCK,
-      where: {
-        [Op.or]: [
-          { name: { [Op.like]: `%${filter}%` } },
-          { breed: { [Op.like]: `%${filter}%` } }
-        ],
-        statusId: INACTIVE
-      },
-      offset,
-      limit,
-      order: [['updatedAt', 'DESC']],
-      attributes: [
-        'id',
-        'customerId',
-        'name',
-        'type',
-        'breed',
-        'sex',
-        'observations',
-        [sequelize.col('user.name'), 'userName'],
-        'updatedAt'
+  return Pet.findAndCountAll({
+    tableHint: TableHints.NOLOCK,
+    where: {
+      [Op.or]: [
+        { name: { [Op.like]: `%${filter}%` } },
+        { breed: { [Op.like]: `%${filter}%` } }
       ],
-      include: {
-        model: User,
-        attributes: [],
-        required: false
-      }
-    })
-    .then(pets => res
-      .status(200)
-      .json({ success: true, pets }))
-    .catch(err => ReE(res, err, 422))
+      statusId: INACTIVE
+    },
+    offset,
+    limit,
+    order: [['updatedAt', 'DESC']],
+    attributes: [
+      'id',
+      'customerId',
+      'name',
+      'type',
+      'breed',
+      'sex',
+      'observations',
+      [sequelize.col('user.name'), 'userName'],
+      'updatedAt'
+    ],
+    include: {
+      model: User,
+      attributes: [],
+      required: false
+    }
+  })
+    .then((pets) => res.status(200).json({ success: true, pets }))
+    .catch((err) => ReE(res, err, 422))
 }
 module.exports.getInactive = getInactive
 
 const getById = (req, res) => {
-
-  return Pet
-    .findOne({
-      tableHint: TableHints.NOLOCK,
-      where: {
-        id: req.params.id
-      },
-      attributes: [
-        'id',
-        'customerId',
-        'name',
-        'type',
-        'breed',
-        'sex',
-        'weight',
-        [sequelize.fn('date_format', sequelize.col('birthDate'), '%Y-%m-%d'), 'birthDate'],
-        'observations',
-        'statusId'
-      ]
-    })
-    .then(pet => res
-      .status(200)
-      .json({ success: true, pet }))
-    .catch(err => ReE(res, err, 422))
+  return Pet.findOne({
+    tableHint: TableHints.NOLOCK,
+    where: {
+      id: req.params.id
+    },
+    attributes: [
+      'id',
+      'customerId',
+      'name',
+      'type',
+      'breed',
+      'sex',
+      'weight',
+      [
+        sequelize.fn('date_format', sequelize.col('birthDate'), '%Y-%m-%d'),
+        'birthDate'
+      ],
+      'observations',
+      'statusId'
+    ]
+  })
+    .then((pet) => res.status(200).json({ success: true, pet }))
+    .catch((err) => ReE(res, err, 422))
 }
 module.exports.getById = getById
 
 const deleteRecord = (req, res) => {
-  return Pet
-    .findOne({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(pet =>
-      pet.destroy()
-        .then(pet => {
+  return Pet.findOne({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then((pet) =>
+      pet
+        .destroy()
+        .then((pet) => {
           const resp = {
             message: `Paciente "${pet.name}" eliminado`,
             pet
@@ -186,16 +199,16 @@ const deleteRecord = (req, res) => {
 module.exports.deleteRecord = deleteRecord
 
 const deactivateRecord = (req, res) => {
-  return Pet
-    .findOne({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(pet =>
+  return Pet.findOne({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then((pet) =>
       //pet.destroy()
-      pet.update({ statusId: INACTIVE })
-        .then(pet => {
+      pet
+        .update({ statusId: INACTIVE })
+        .then((pet) => {
           const resp = {
             message: `Paciente "${pet.name}" desactivado`,
             pet
@@ -209,23 +222,25 @@ const deactivateRecord = (req, res) => {
 module.exports.deactivateRecord = deactivateRecord
 
 const restoreRecord = (req, res) => {
-  return Pet
-    .findOne({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(pet =>
+  return Pet.findOne({
+    where: {
+      id: req.params.id
+    }
+  })
+    .then((pet) =>
       //pet.destroy()
-      pet.update({ statusId: ACTIVE })
-        .then(pet => {
+      pet
+        .update({ statusId: ACTIVE })
+        .then((pet) => {
           const resp = {
             message: `Paciente "${pet.name}" reactivado`,
             pet
           }
           return ReS(res, resp, 200)
         })
-        .catch(() => ReE(res, 'Error ocurrido intentando restaurar el paciente'))
+        .catch(() =>
+          ReE(res, 'Error ocurrido intentando restaurar el paciente')
+        )
     )
     .catch(() => ReE(res, 'Error ocurrido intentando restaurar el paciente'))
 }

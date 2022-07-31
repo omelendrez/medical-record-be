@@ -1,17 +1,17 @@
 module.exports.updateOrCreate = (model, where, newItem, beforeCreate) => {
   return new Promise((resolve, reject) => {
-    model
-      .findOne({ where })
-      .then(item => {
-        if (!item) {
-          return model.create(newItem)
-            .then(item => resolve(item.data()))
-            .catch(err => reject(err))
-        }
-        return item.update(newItem, { where: where })
-          .then(item => resolve(item.data()))
-          .catch(err => reject(err))
-      })
+    model.findOne({ where }).then((item) => {
+      if (!item) {
+        return model
+          .create(newItem)
+          .then((item) => resolve(item.data()))
+          .catch((err) => reject(err))
+      }
+      return item
+        .update(newItem, { where: where })
+        .then((item) => resolve(item.data()))
+        .catch((err) => reject(err))
+    })
   })
 }
 
@@ -35,22 +35,20 @@ module.exports.ReS = (res, data, code) => {
 module.exports.verifyDelete = (models, where) => {
   return new Promise((resolve, reject) => {
     const promises = []
-    models.map(model => {
+    models.map((model) => {
       const Model = require('../models')[model]
       promises.push(Model.findAll({ where, raw: true }))
     })
-    Promise
-      .all(promises)
-      .then(results => {
-        resolve(results.filter(result => result.length > 0).length)
-      })
+    Promise.all(promises).then((results) => {
+      resolve(results.filter((result) => result.length > 0).length)
+    })
   })
 }
 
 module.exports.ACTIVE = 1
 module.exports.INACTIVE = 11
 
-module.exports.updateCustomerBalance = async customerId => {
+module.exports.updateCustomerBalance = async (customerId) => {
   const sequelize = require('sequelize')
   const Consultation = require('../models').consultation
   const Vaccination = require('../models').vaccination
@@ -62,8 +60,7 @@ module.exports.updateCustomerBalance = async customerId => {
     where: {
       customerId
     },
-    attributes:
-      [[sequelize.fn('sum', sequelize.col('amount')), 'total']]
+    attributes: [[sequelize.fn('sum', sequelize.col('amount')), 'total']]
   }
 
   let total = 0
@@ -77,29 +74,29 @@ module.exports.updateCustomerBalance = async customerId => {
   res = await Deworming.findAll(params)
   total += res[0].toJSON().total
 
-  res = await Account
-    .findAll({
-      tableHint: sequelize.TableHints.NOLOCK,
-      where: {
-        customerId
-      },
-      attributes: [
-        [sequelize.fn('sum', sequelize.literal('debit-credit')), 'total']
-      ]
-    })
+  res = await Account.findAll({
+    tableHint: sequelize.TableHints.NOLOCK,
+    where: {
+      customerId
+    },
+    attributes: [
+      [sequelize.fn('sum', sequelize.literal('debit-credit')), 'total']
+    ]
+  })
 
   total += res[0].toJSON().total
 
-  Customer
-    .findOne({
-      tableHint: sequelize.TableHints.NOLOCK,
-      where: {
-        id: customerId
-      }
-    })
-    .then(customer => {
-      customer.update({ balance: total })
-    })
+  Customer.findOne({
+    tableHint: sequelize.TableHints.NOLOCK,
+    where: {
+      id: customerId
+    }
+  }).then((customer) => {
+    customer.update({ balance: total })
+  })
 }
 
 module.exports.queryResultsLimit = 10
+
+module.exports.isValidEmail = (email) =>
+  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
