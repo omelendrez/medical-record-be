@@ -7,6 +7,10 @@ router.get('/', Consultation.getAll)
 router.get('/inactive', Consultation.getInactive)
 router.get('/programmed-visits', Consultation.getnextAppointments)
 router.get('/by-pet/:id', Consultation.getByPet)
+router.get(
+  '/programmed-visits-by-period',
+  Consultation.getnextAppointmentsByPeriod
+)
 router.get('/:id', Consultation.getById)
 router.post('/', Consultation.create)
 router.post('/:id', Consultation.create)
