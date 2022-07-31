@@ -4,12 +4,7 @@
   "description": "Backend for vet medical record app",
   "main": "./bin/www",
   "scripts": {
-    "dev": "node ./bin/www",
-    "start": "node ./bin/www",
-    "empty": "npx sequelize-cli db:migrate:undo:all",
-    "migrate": "npx sequelize-cli db:migrate",
-    "seed": "npx sequelize-cli db:seed:all",
-    "reset-db": "npm run empty & npm run migrate & npm run seed"
+    "start": "node ./bin/www"
   },
   "keywords": [
     "backend",
