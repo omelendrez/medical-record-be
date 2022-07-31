@@ -1,0 +1,29 @@
+### Crear registro Admin
+POST http://localhost:3000/api/roles/1
+content-type: application/json
+
+{
+    "name": "Administrador",
+    "observations": "Permite la creación de nuevos usuarios, y el cambio de permisos y la desactivación de usuarios exitentes"
+}
+
+### Crear registro User
+POST http://localhost:3000/api/roles/2
+content-type: application/json
+
+{
+    "name": "Usuario",
+    "observations": "Usa la aplicación a nivel veterinario para la gestión de sus clientes y mascotas"
+}
+
+### Crear registro Guest
+POST http://localhost:3000/api/roles/3
+content-type: application/json
+
+{
+    "name": "Invitado",
+    "observations": "Usa la aplicación a nivel invitado y sólo puede ver datos, sin modificarlos"
+}
+
+### Listar status
+GET http://localhost:3000/api/roles

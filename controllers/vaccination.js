@@ -14,7 +14,8 @@ const {
 } = require('../helpers')
 
 const create = async (req, res) => {
-  const { id, date, amount } = req.body
+  const { id } = req.params
+  const { date, amount } = req.body
 
   if (!id) {
     if (amount.length === 0)
@@ -188,7 +189,7 @@ const getInactive = (req, res) => {
       [sequelize.col('user.name'), 'userName'],
       [sequelize.col('vaccination.updatedAt'), 'updatedAt']
     ],
-    order: [['date', 'DESC']],
+    order: [['id', 'DESC']],
     include: [
       {
         model: Pet,
