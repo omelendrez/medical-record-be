@@ -326,6 +326,54 @@ const getnextAppointments = (req, res) => {
 
 module.exports.getnextAppointments = getnextAppointments
 
+const getnextAppointmentsByPeriod = (req, res) => {
+  let { startDate, endDate } = req.query
+  const newStart = new Date(startDate)
+  newStart.setDate(newStart.getDate())
+  const newEnd = new Date(endDate)
+  newEnd.setDate(newEnd.getDate() + 1)
+
+  const Pet = require('../models').pet
+  Vaccination.belongsTo(Pet)
+
+  const Customer = require('../models').customer
+  Vaccination.belongsTo(Customer)
+
+  return Vaccination.findAndCountAll({
+    where: {
+      nextAppointment: {
+        [Op.between]: [newStart, newEnd]
+      }
+    },
+    attributes: [
+      'id',
+      [
+        sequelize.fn(
+          'date_format',
+          sequelize.col('nextAppointment'),
+          '%Y-%m-%d'
+        ),
+        'nextAppointment'
+      ],
+      [sequelize.col('pet.name'), 'petName'],
+      [sequelize.col('customer.name'), 'customerName'],
+      'customerId',
+      'petId'
+    ],
+    order: [['nextAppointment', 'ASC']],
+    include: [
+      { model: Pet, attributes: [] },
+      { model: Customer, attributes: [] }
+    ]
+  })
+    .then((vaccinations) =>
+      res.status(200).json({ success: true, vaccinations })
+    )
+    .catch((err) => ReE(res, err, 422))
+}
+
+module.exports.getnextAppointmentsByPeriod = getnextAppointmentsByPeriod
+
 const deleteRecord = (req, res) => {
   return Vaccination.findOne({
     where: {
