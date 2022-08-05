@@ -110,6 +110,7 @@ const getAll = (req, res) => {
       'date',
       'diagnosis',
       'treatmentStage',
+      'additionalExams',
       'nextAppointment',
       'amount',
       [sequelize.col('user.name'), 'userName'],
@@ -183,6 +184,7 @@ const getInactive = (req, res) => {
       'date',
       'diagnosis',
       'treatmentStage',
+      'additionalExams',
       'nextAppointment',
       'amount',
       [sequelize.col('user.name'), 'userName'],
@@ -229,6 +231,7 @@ const getById = (req, res) => {
       'diagnosis',
       'treatment',
       'treatmentStage',
+      'additionalExams',
       [
         sequelize.fn(
           'date_format',
@@ -272,6 +275,7 @@ const getByPet = (req, res) => {
       'diagnosis',
       'treatment',
       'treatmentStage',
+      'additionalExams',
       'nextAppointment',
       'amount',
       [sequelize.col('user.name'), 'userName'],

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       diagnosis: DataTypes.STRING(500),
       treatment: DataTypes.STRING(500),
       treatmentStage: DataTypes.STRING,
+      additionalExams: DataTypes.TEXT,
       nextAppointment: {
         type: DataTypes.DATE,
         defaultValue: null
