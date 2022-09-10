@@ -17,27 +17,13 @@ const getAppointments = async (req, res) => {
   const offset = limit * (page - 1)
   const filter = req.query.filter || ''
 
-  let query = queries.appointments.rows
-    .replace('{limit}', limit)
-    .replace('{offset}', offset)
-    .replace('{filter}', filter)
-    .replace('{filter}', filter)
-    .replace('{filter}', filter)
+  const rows = await seq.query(queries.appointments.rows, { replacements: { filter, offset, limit } })
 
-  const tableRows = await seq.query(query)
+  const recordsCount = await seq.query(queries.appointments.count, { replacements: { filter } })
 
+  const count = recordsCount.reduce((acc, curr) => acc += curr.total, 0)
 
-  query = queries.appointments.count
-    .replace('{filter}', filter)
-    .replace('{filter}', filter)
-    .replace('{filter}', filter)
-
-
-  const recordsCount = await seq.query(query)
-
-  const total = recordsCount[0].reduce((acc, curr) => acc += curr.total, 0)
-
-  res.status(200).json({ success: true, appointments: { rows: tableRows[0], count: total } })
+  res.status(200).json({ success: true, appointments: { rows, count } })
 
 }
 
