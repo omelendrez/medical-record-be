@@ -20,7 +20,7 @@ const getAppointments = async (req, res) => {
   const rows = await seq.query(queries.appointments.rows, { replacements: { filter, offset, limit } })
   const count = await seq.query(queries.appointments.count, { replacements: { filter } })
 
-  res.status(200).json({ success: true, appointments: { rows, count } })
+  res.status(200).json({ success: true, appointments: { rows, count: count.total } })
 
 }
 

@@ -33,32 +33,32 @@ BEGIN
 SELECT COUNT(*)
 FROM (
 
-SELECT count(*) total 
-FROM consultations c 
-INNER JOIN pets p ON c.petId = p.id 
-INNER JOIN customers cu ON c.customerId = cu.id 
-WHERE c.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
-AND c.nextAppointment >= CURDATE() 
+SELECT count(*)
+FROM consultations c
+INNER JOIN pets p ON c.petId = p.id
+INNER JOIN customers cu ON c.customerId = cu.id
+WHERE c.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
+AND c.nextAppointment >= CURDATE()
 
-UNION 
+UNION
 
-SELECT count(*) 
-FROM vaccinations v 
-INNER JOIN pets p ON v.petId = p.id 
-INNER JOIN customers cu ON v.customerId = cu.id 
-WHERE v.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
-AND v.nextAppointment >= CURDATE()  
+SELECT count(*)
+FROM vaccinations v
+INNER JOIN pets p ON v.petId = p.id
+INNER JOIN customers cu ON v.customerId = cu.id
+WHERE v.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
+AND v.nextAppointment >= CURDATE()
 
-UNION 
+UNION
 
-SELECT count(*) 
-FROM dewormings d 
-INNER JOIN pets p ON d.petId = p.id 
-INNER JOIN customers cu ON d.customerId =cu.id 
-WHERE d.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
+SELECT count(*)
+FROM dewormings d
+INNER JOIN pets p ON d.petId = p.id
+INNER JOIN customers cu ON d.customerId =cu.id
+WHERE d.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
 AND nextAppointment >= CURDATE()
 
 ) AS T;
@@ -80,35 +80,35 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_appointments`(_filter varchar(50), _offset int, _limit int)
 BEGIN
-SELECT c.id, p.name 'petName', cu.name 'customerName', DATE_FORMAT(c.nextAppointment, '%Y-%m-%d') nextAppointment, 'consultas' type, c.customerId, c.petId 
-FROM consultations c 
-INNER JOIN pets p ON c.petId = p.id 
-INNER JOIN customers cu ON c.customerId = cu.id 
-WHERE c.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
-AND c.nextAppointment >= CURDATE() 
+SELECT c.id, p.name 'petName', cu.name 'customerName', DATE_FORMAT(c.nextAppointment, '%Y-%m-%d') nextAppointment, 'consultas' type, c.customerId, c.petId
+FROM consultations c
+INNER JOIN pets p ON c.petId = p.id
+INNER JOIN customers cu ON c.customerId = cu.id
+WHERE c.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
+AND c.nextAppointment >= CURDATE()
 
-UNION 
+UNION
 
-SELECT v.id, p.name, cu.name, DATE_FORMAT(v.nextAppointment, '%Y-%m-%d'), 'vacunaciones', v.customerId, v.petId 
-FROM vaccinations v 
-INNER JOIN pets p ON v.petId = p.id 
-INNER JOIN customers cu ON v.customerId = cu.id 
-WHERE v.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
-AND v.nextAppointment >= CURDATE()  
+SELECT v.id, p.name, cu.name, DATE_FORMAT(v.nextAppointment, '%Y-%m-%d'), 'vacunaciones', v.customerId, v.petId
+FROM vaccinations v
+INNER JOIN pets p ON v.petId = p.id
+INNER JOIN customers cu ON v.customerId = cu.id
+WHERE v.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
+AND v.nextAppointment >= CURDATE()
 
-UNION 
+UNION
 
-SELECT d.id, p.name, cu.name, DATE_FORMAT(d.nextAppointment, '%Y-%m-%d'), 'desparasitaciones', d.customerId, d.petId 
-FROM dewormings d 
-INNER JOIN pets p ON d.petId = p.id 
-INNER JOIN customers cu ON d.customerId =cu.id 
-WHERE d.nextAppointment IS NOT NULL 
-AND p.name LIKE CONCAT('%',_filter,'%') 
-AND d.nextAppointment >= CURDATE() 
+SELECT d.id, p.name, cu.name, DATE_FORMAT(d.nextAppointment, '%Y-%m-%d'), 'desparasitaciones', d.customerId, d.petId
+FROM dewormings d
+INNER JOIN pets p ON d.petId = p.id
+INNER JOIN customers cu ON d.customerId =cu.id
+WHERE d.nextAppointment IS NOT NULL
+AND p.name LIKE CONCAT('%',_filter,'%')
+AND d.nextAppointment >= CURDATE()
 
-ORDER BY nextAppointment 
+ORDER BY nextAppointment
 LIMIT _offset, _limit;
 END ;;
 DELIMITER ;
