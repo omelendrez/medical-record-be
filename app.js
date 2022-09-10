@@ -15,9 +15,10 @@ const deworming = require('./routes/deworming')
 const account = require('./routes/account')
 const status = require('./routes/status')
 const user = require('./routes/user')
+const appointment = require('./routes/appointment')
 
 const models = require('./models')
-const CONFIG = require('./config')
+const CONFIG = require('./config/config.json')
 
 const app = express()
 
@@ -28,9 +29,9 @@ app.use(cors())
 
 models.sequelize
   .authenticate()
-  .then(() => console.log('Connected to SQL database:', CONFIG.db_name))
+  .then(() => console.log('Connected to SQL database.'))
   .catch((err) =>
-    console.error('Unable to connect to SQL database:', CONFIG.db_name, err)
+    console.error('Unable to connect to SQL database.', err)
   )
 
 if (CONFIG.app === 'dev') {
@@ -59,6 +60,7 @@ app.use('/api/dewormings', deworming)
 app.use('/api/accounts', account)
 app.use('/api/status', status)
 app.use('/api/users', user)
+app.use('/api/appointments', appointment)
 
 app.use('/', function (req, res) {
   res.statusCode = 422
