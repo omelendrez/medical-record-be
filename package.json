@@ -1,18 +1,27 @@
 {
   "name": "medical-record-be",
   "version": "1.0.0",
-  "description": "Backend for vet medical record app",
+  "description": "Medical Record Backend",
   "main": "./bin/www",
-  "scripts": {
-    "start": "node ./bin/www"
+  "private": true,
+  "author": "Omar Melendrez <omar.melendrez@gmail.com>",
+  "engines": {
+    "node": "16.x"
   },
   "keywords": [
     "backend",
+    "veterinary",
     "medical record",
     "veterinaria",
     "historia clinica"
   ],
-  "author": "Omar Melendrez",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omelendrez/medical-record-be.git"
+  },
+  "scripts": {
+    "start": "node ./bin/www"
+  },
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
