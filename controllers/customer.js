@@ -56,13 +56,16 @@ const getAll = (req, res) => {
   Customer.hasMany(Pet)
 
   const filter = req.query.filter || ''
+  const filterField = req.query.filterField || ''
   const limit = parseInt(req.query.limit || queryResultsLimit)
   const page = parseInt(req.query.page || 1)
 
   const filterArray = filter.split(' ')
 
+  const filterFieldName = filterField || 'name'
+
   const options = filterArray.map((word) => ({
-    name: { [Op.like]: `%${word}%` }
+    [filterFieldName]: { [Op.like]: `%${word}%` }
   }))
 
   let where = {
