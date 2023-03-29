@@ -183,9 +183,10 @@ const getDebtors = (req, res) => {
       'email',
       'observations',
       [sequelize.col('status.name'), 'customerStatus'],
-      'balance'
+      'balance',
+      'updatedAt'
     ],
-    order: [['name', 'ASC']],
+    order: [['updatedAt', 'DESC']],
     offset,
     limit,
     include: [
