@@ -22,7 +22,11 @@ const CONFIG = require('./config/config.json')
 
 const app = express()
 
-app.use(logger('dev'))
+app.use(
+  logger('dev', {
+    skip: (req, res) => res.statusCode < 400
+  })
+)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
@@ -30,9 +34,7 @@ app.use(cors())
 models.sequelize
   .authenticate()
   .then(() => console.log('Connected to SQL database.'))
-  .catch((err) =>
-    console.error('Unable to connect to SQL database.', err)
-  )
+  .catch((err) => console.error('Unable to connect to SQL database.', err))
 
 if (CONFIG.app === 'dev') {
   models.sequelize.sync({ force: false }) //creates table if they do not already exist
