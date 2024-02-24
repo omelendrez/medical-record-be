@@ -24,18 +24,18 @@
   },
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^5.0.1",
     "bcrypt-promise": "^2.0.0",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.18.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
     "morgan": "^1.10.0",
-    "mysql2": "^3.9.1",
+    "mysql2": "^2.3.3",
     "parse-error": "^0.2.0",
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.21.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^2.0.19"
   }
 }
