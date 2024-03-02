@@ -175,6 +175,7 @@ const getDebtors = (req, res) => {
         }
       }
     ],
+    distinct: true,
     attributes: [
       'id',
       'name',
@@ -197,8 +198,8 @@ const getDebtors = (req, res) => {
       },
       {
         model: Pet,
-        attributes: ['id', 'name', 'statusId'],
-        required: false
+        attributes: ['name'],
+        required: true
       }
     ]
   })
