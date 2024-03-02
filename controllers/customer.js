@@ -218,8 +218,19 @@ const getBalanceById = (req, res) => {
     res.status(200).json({ success: true, debt })
   })
 }
-
 module.exports.getBalanceById = getBalanceById
+
+const getTotalAmount = async (req, res) => {
+  return Customer.findAll({
+    tableHint: TableHints.NOLOCK,
+    attributes: [[Sequelize.fn('SUM', Sequelize.col('balance')), 'totalAmount']]
+  }).then((debtors) => {
+    console.log(debtors[0])
+    res.status(200).json({ success: true, debtors: debtors[0] })
+  })
+}
+
+module.exports.getTotalAmount = getTotalAmount
 
 const getById = (req, res) => {
   const Pet = require('../models').pet

@@ -20,6 +20,7 @@
     "url": "https://github.com/omelendrez/medical-record-be.git"
   },
   "scripts": {
+    "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "license": "ISC",
