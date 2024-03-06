@@ -10,7 +10,7 @@ const {
   ACTIVE,
   INACTIVE,
   updateCustomerBalance,
-  queryResultsLimit
+  DEFAULT_MAX_QUERY_LIMIT
 } = require('../helpers')
 
 const create = async (req, res) => {
@@ -79,7 +79,7 @@ const getAll = (req, res) => {
   Vaccination.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -155,7 +155,7 @@ const getInactive = (req, res) => {
   Vaccination.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -246,7 +246,7 @@ const getByPet = (req, res) => {
   const User = require('../models').user
   Vaccination.belongsTo(User)
 
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)

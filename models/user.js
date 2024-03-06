@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeSave(async (user, options) => {
     if (user.changed('password')) {
       const salt = await bcrypt.genSalt(10)
-      console.log(salt)
       if (!salt) {
         throw new Error('Salt failed')
       }
