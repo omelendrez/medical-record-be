@@ -9,7 +9,7 @@ const {
   updateOrCreate,
   ACTIVE,
   INACTIVE,
-  queryResultsLimit
+  DEFAULT_MAX_QUERY_LIMIT
 } = require('../helpers')
 
 const create = async (req, res) => {
@@ -57,7 +57,7 @@ const getAll = (req, res) => {
 
   const filter = req.query.filter || ''
   const filterField = req.query.filterField || ''
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const filterArray = filter.split(' ')
@@ -114,7 +114,7 @@ const getInactive = (req, res) => {
   Customer.belongsTo(User)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -160,7 +160,7 @@ const getDebtors = (req, res) => {
   Status.hasMany(Customer)
 
   const filter = req.query.filter || ''
-  const limit = parseInt(req.query.limit || queryResultsLimit)
+  const limit = parseInt(req.query.limit || DEFAULT_MAX_QUERY_LIMIT)
   const page = parseInt(req.query.page || 1)
 
   const offset = limit * (page - 1)
@@ -225,10 +225,9 @@ const getTotalAmount = async (req, res) => {
   return Customer.findAll({
     tableHint: TableHints.NOLOCK,
     attributes: [[Sequelize.fn('SUM', Sequelize.col('balance')), 'totalAmount']]
-  }).then((debtors) => {
-    console.log(debtors[0])
+  }).then((debtors) =>
     res.status(200).json({ success: true, debtors: debtors[0] })
-  })
+  )
 }
 
 module.exports.getTotalAmount = getTotalAmount

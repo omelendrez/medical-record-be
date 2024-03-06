@@ -16,6 +16,7 @@ const account = require('./routes/account')
 const status = require('./routes/status')
 const user = require('./routes/user')
 const appointment = require('./routes/appointment')
+const document = require('./routes/document')
 
 const models = require('./models')
 const CONFIG = require('./config/config.json')
@@ -65,6 +66,7 @@ app.use('/api/accounts', account)
 app.use('/api/status', status)
 app.use('/api/users', user)
 app.use('/api/appointments', appointment)
+app.use('/api/documents', document)
 
 app.use('/', function (req, res) {
   res.statusCode = 422

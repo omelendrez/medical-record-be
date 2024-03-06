@@ -96,7 +96,7 @@ module.exports.updateCustomerBalance = async (customerId) => {
   })
 }
 
-module.exports.queryResultsLimit = 10
+module.exports.DEFAULT_MAX_QUERY_LIMIT = 10
 
 module.exports.isValidEmail = (email) =>
   /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
