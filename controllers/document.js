@@ -13,7 +13,7 @@ const {
 
 const create = async (req, res) => {
   const { id } = req.params
-  const { date, description } = req.body
+  const { description } = req.body
 
   if (description.length === 0) {
     return ReE(
@@ -21,17 +21,6 @@ const create = async (req, res) => {
       {
         success: false,
         message: 'Es recomendable agregar una breve descripción del documento'
-      },
-      422
-    )
-  }
-
-  if (!date) {
-    return ReE(
-      res,
-      {
-        success: false,
-        message: 'Faltan datos. La fecha es un campo requerido'
       },
       422
     )
@@ -93,6 +82,7 @@ const getAll = (req, res) => {
       'id',
       'customerId',
       'petId',
+      'ext',
       [sequelize.col('customer.name'), 'customerName'],
       [sequelize.col('pet.name'), 'petName'],
       'date',
@@ -132,6 +122,7 @@ const getById = (req, res) => {
       'id',
       'customerId',
       'petId',
+      'ext',
       [sequelize.fn('date_format', sequelize.col('date'), '%Y-%m-%d'), 'date'],
       'description'
     ]
@@ -161,7 +152,9 @@ const getByPet = (req, res) => {
     attributes: [
       'id',
       'date',
+      'customerId',
       'petId',
+      'ext',
       'description',
       [sequelize.col('user.name'), 'userName'],
       'updatedAt'
