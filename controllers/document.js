@@ -13,9 +13,9 @@ const {
 
 const create = async (req, res) => {
   const { id } = req.params
-  const { description } = req.body
+  const { description, ext } = req.body
 
-  if (description.ext === 0) {
+  if (!ext) {
     return ReE(
       res,
       {
@@ -27,7 +27,7 @@ const create = async (req, res) => {
     )
   }
 
-  if (description.length === 0) {
+  if (!description) {
     return ReE(
       res,
       {
