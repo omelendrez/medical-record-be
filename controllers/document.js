@@ -15,6 +15,18 @@ const create = async (req, res) => {
   const { id } = req.params
   const { description } = req.body
 
+  if (description.ext === 0) {
+    return ReE(
+      res,
+      {
+        success: false,
+        message:
+          'El documento debe tener una extension (debe terminar con .pdf, .doc o .docx)'
+      },
+      422
+    )
+  }
+
   if (description.length === 0) {
     return ReE(
       res,
